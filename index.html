@@ -18,8 +18,8 @@
           <br>Actual behavior (Tauri 2.0.6): Window dimensions visibly change.
         </li>
         <li>Click the <code>Get</code> button again.
-          <br>Expected behavior: Values do not change.
-          <br>Actual behavior (Tauri 2.0.6): Values change (height on Windows, y on Linux/X11).
+          <br>Expected behavior: Values do not change when mode is set to outer.
+          <br>Actual behavior (Tauri 2.0.6): Values change (Linux: y, Windows: w + h (outer) or x + y (inner)).
         </li>
         <li>There is currently no difference between inner and outer dimensions on Linux.</li>
       </ol>
