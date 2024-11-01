@@ -10,34 +10,31 @@
 
   <body>
     <main class="container">
-      <h1>Welcome to Tauri</h1>
+      <h1>Reproduction for inaccurate window dimension handling</h1>
+      <ol>
+        <li>Click the <code>Get</code> button. Input fields will be filled with the current window dimensions.</li>
+        <li>Click the <code>Set</code> button. Window dimensions will be updated based on the input values.
+          <br>Expected behavior: Window dimensions do not visibly change.
+          <br>Actual behavior (Tauri 2.0.6): Window dimensions visibly change.
+        </li>
+        <li>Click the <code>Get</code> button again.
+          <br>Expected behavior: Values do not change.
+          <br>Actual behavior (Tauri 2.0.6): Values change (height on Windows, y on Linux/X11).
+        </li>
+        <li>There is no difference between inner and outer dimensions.</li>
+      </ol>
 
-      <div class="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/src/assets/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img
-            src="/src/assets/tauri.svg"
-            class="logo tauri"
-            alt="Tauri logo"
-          />
-        </a>
-        <a href="https://www.typescriptlang.org/docs" target="_blank">
-          <img
-            src="/src/assets/typescript.svg"
-            class="logo typescript"
-            alt="typescript logo"
-          />
-        </a>
+      <div class="repro">
+        <h2>Window Dimensions</h2>
+        <form id="dimensions-form">
+          <p><label>x: <input id="x" type="number" required readonly /></label></p>
+          <p><label>y: <input id="y" type="number" required readonly /></label></p>
+          <p><label>w: <input id="w" type="number" required readonly /></label></p>
+          <p><label>h: <input id="h" type="number" required readonly /></label></p>
+          <p>Get mode: <label><input type="radio" name="mode" id="outer" checked /> Outer</label> <label><input type="radio" name="mode" id="inner" /> Inner</label></p>
+          <p><button id="dimensions-get-button" type="button">Get</button> <button type="submit">Set</button></p>
+        </form>
       </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
-
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
     </main>
   </body>
 </html>
