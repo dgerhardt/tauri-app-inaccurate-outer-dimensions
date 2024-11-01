@@ -6,10 +6,11 @@ let yEl: HTMLInputElement | null;
 let wEl: HTMLInputElement | null;
 let hEl: HTMLInputElement | null;
 let outerEl: HTMLInputElement | null;
+let mixedEl: HTMLInputElement | null;
 let win = WebviewWindow.getCurrent();
 
 async function updateDimensionFields() {
-  const position = await (outerEl?.checked ? win.outerPosition() : win.innerPosition());
+  const position = await (outerEl?.checked || mixedEl?.checked ? win.outerPosition() : win.innerPosition());
   const size = await (outerEl?.checked ? win.outerSize() : win.innerSize());
   xEl!.value = position.x.toString();
   yEl!.value = position.y.toString();
@@ -40,6 +41,7 @@ window.addEventListener("DOMContentLoaded", () => {
   wEl = document.querySelector("#w");
   hEl = document.querySelector("#h");
   outerEl = document.querySelector("#outer");
+  mixedEl = document.querySelector("#mixed");
   document.querySelector("#dimensions-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
     updateWindowDimensions();
