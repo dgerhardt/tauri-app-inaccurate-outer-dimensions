@@ -13,6 +13,11 @@ let outerEl: HTMLInputElement | null;
 let mixedEl: HTMLInputElement | null;
 let mainWin = WebviewWindow.getCurrent();
 
+// Monkey patch broken Tauri API
+PhysicalPosition.prototype.toLogical = function (scaleFactor) {
+  return new LogicalPosition(this.x / scaleFactor, this.y / scaleFactor);
+};
+
 const posTest1 = new PhysicalPosition(10, 25);
 const posTest2 = posTest1.toLogical(1);
 console.log('phyical -> logical', posTest1, posTest2);
