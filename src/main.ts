@@ -1,4 +1,4 @@
-import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
+import { LogicalPosition, LogicalSize, PhysicalPosition } from "@tauri-apps/api/dpi";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 let xEl: HTMLInputElement | null;
@@ -12,6 +12,10 @@ let dhEl: HTMLElement | null;
 let outerEl: HTMLInputElement | null;
 let mixedEl: HTMLInputElement | null;
 let mainWin = WebviewWindow.getCurrent();
+
+const posTest1 = new PhysicalPosition(10, 25);
+const posTest2 = posTest1.toLogical(1);
+console.log('phyical -> logical', posTest1, posTest2);
 
 async function updateDimensionFields(win: WebviewWindow) {
   const scaleFactor = await win.scaleFactor();
