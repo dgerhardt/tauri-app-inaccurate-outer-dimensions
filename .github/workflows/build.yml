@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - tauri-2.1.0
 
 jobs:
   tauri-build:
