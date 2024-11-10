@@ -30,6 +30,15 @@ ol {
   text-align: left;
 }
 
+table {
+  margin: auto;
+}
+
+td {
+  padding: 5px;
+  text-align: right;
+}
+
 input,
 button {
   border-radius: 8px;

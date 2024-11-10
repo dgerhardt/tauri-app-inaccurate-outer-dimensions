@@ -1,38 +1,73 @@
-import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/dpi";
+import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 let xEl: HTMLInputElement | null;
 let yEl: HTMLInputElement | null;
 let wEl: HTMLInputElement | null;
 let hEl: HTMLInputElement | null;
+let dxEl: HTMLElement | null;
+let dyEl: HTMLElement | null;
+let dwEl: HTMLElement | null;
+let dhEl: HTMLElement | null;
 let outerEl: HTMLInputElement | null;
 let mixedEl: HTMLInputElement | null;
-let win = WebviewWindow.getCurrent();
+let mainWin = WebviewWindow.getCurrent();
 
-async function updateDimensionFields() {
-  const position = await (outerEl?.checked || mixedEl?.checked ? win.outerPosition() : win.innerPosition());
-  const size = await (outerEl?.checked ? win.outerSize() : win.innerSize());
-  xEl!.value = position.x.toString();
-  yEl!.value = position.y.toString();
-  wEl!.value = size.width.toString();
-  hEl!.value = size.height.toString();
+async function updateDimensionFields(win: WebviewWindow) {
+  const scaleFactor = await win.scaleFactor();
+  const pPosition = await (outerEl?.checked || mixedEl?.checked ? win.outerPosition() : win.innerPosition());
+  const pSize = await (outerEl?.checked ? win.outerSize() : win.innerSize());
+  const lPosition = pPosition.toLogical(scaleFactor);
+  const lSize = pSize.toLogical(scaleFactor);
+  console.log('pPos', pPosition);
+  console.log('lPos', lPosition);
+  console.log('lSize', lSize);
+  dxEl!.innerText = (lPosition.x - +xEl!.value).toString();
+  dyEl!.innerText = (lPosition.y - +yEl!.value).toString();
+  dwEl!.innerText = (lSize.width - +wEl!.value).toString();
+  dhEl!.innerText = (lSize.height - +hEl!.value).toString();
+  xEl!.value = lPosition.x.toString();
+  yEl!.value = lPosition.y.toString();
+  wEl!.value = lSize.width.toString();
+  hEl!.value = lSize.height.toString();
 }
 
 function updateWindowDimensions() {
-  win.setPosition(getPositionFromInputs());
-  win.setSize(getSizeFromInputs());
+  mainWin.setPosition(getPositionFromInputs());
+  mainWin.setSize(getSizeFromInputs());
 }
 
-function getPositionFromInputs(): PhysicalPosition {
+function getPositionFromInputs(): LogicalPosition {
   const x = +(xEl?.value ?? 0);
   const y = +(yEl?.value ?? 0);
-  return new PhysicalPosition(x, y);
+  return new LogicalPosition(x, y);
 }
 
-function getSizeFromInputs(): PhysicalSize {
+function getSizeFromInputs(): LogicalSize {
   const w = +(wEl?.value ?? 0);
   const h = +(hEl?.value ?? 0);
-  return new PhysicalSize(w, h);
+  return new LogicalSize(w, h);
+}
+
+async function createWindow(delayed: boolean) {
+  await (await WebviewWindow.getByLabel('newWin'))?.close();
+  const newWin = new WebviewWindow('newWin', {
+    x: +(xEl?.value ?? 0),
+    y: +(yEl?.value ?? 0),
+    width: +(wEl?.value ?? 0),
+    height: +(hEl?.value ?? 0),
+  });
+  newWin.once('tauri://created', async () => {
+    const func = async () => {
+      await updateDimensionFields(newWin);
+      newWin.close();
+    }
+    if (delayed) {
+      setTimeout(() => func() , 100);
+    } else {
+      func();
+    }
+  });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -40,6 +75,10 @@ window.addEventListener("DOMContentLoaded", () => {
   yEl = document.querySelector("#y");
   wEl = document.querySelector("#w");
   hEl = document.querySelector("#h");
+  dxEl = document.querySelector("#dx");
+  dyEl = document.querySelector("#dy");
+  dwEl = document.querySelector("#dw");
+  dhEl = document.querySelector("#dh");
   outerEl = document.querySelector("#outer");
   mixedEl = document.querySelector("#mixed");
   document.querySelector("#dimensions-form")?.addEventListener("submit", (e) => {
@@ -48,6 +87,14 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   document.querySelector("#dimensions-get-button")?.addEventListener("click", (e) => {
     e.preventDefault();
-    updateDimensionFields();
+    updateDimensionFields(mainWin);
+  });
+  document.querySelector("#create-window")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    createWindow(false);
+  });
+  document.querySelector("#create-window-delayed")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    createWindow(true);
   });
 });

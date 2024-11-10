@@ -10,29 +10,35 @@
 
   <body>
     <main class="container">
-      <h1>Reproduction for inaccurate window dimension handling</h1>
+      <h1>Tauri window position and size testing</h1>
       <ol>
-        <li>Click the <code>Get</code> button. Input fields will be filled with the current window dimensions.</li>
-        <li>Click the <code>Set</code> button. Window dimensions will be updated based on the input values.
-          <br>Expected behavior: Window dimensions do not visibly change.
-          <br>Actual behavior (Tauri 2.0.6): Window dimensions visibly change.
-        </li>
-        <li>Click the <code>Get</code> button again.
-          <br>Expected behavior: Values do not change when mode is set to outer.
-          <br>Actual behavior (Tauri 2.0.6): Values change (Linux: y, Windows: w + h (outer) or x + y (inner)).
-        </li>
-        <li>There is currently no difference between inner and outer dimensions on Linux.</li>
+        <li>The <code>Get</code> button determines the current window position and size values and updates the fields based on these values.</li>
+        <li>The <code>Set</code> button sets the window's position and size based on the field values. While this is not documented, Tauri handles the position as outer position and size as inner size.</li>
+        <li>The <code>Get inside event handler</code> button opens a new window based using the field values, determines the new windows position and size values in a <code>tauri://created</code> handler and then updates the fields based on these values.</li>
       </ol>
 
       <div class="repro">
-        <h2>Window Dimensions</h2>
+        <h2>Window Dimensions (logical)</h2>
         <form id="dimensions-form">
-          <p><label>x: <input id="x" type="number" required readonly /></label></p>
-          <p><label>y: <input id="y" type="number" required readonly /></label></p>
-          <p><label>w: <input id="w" type="number" required readonly /></label></p>
-          <p><label>h: <input id="h" type="number" required readonly /></label></p>
-          <p>Get mode: <label><input type="radio" name="mode" id="outer" checked /> Outer</label> <label><input type="radio" name="mode" id="inner" /> Inner</label> <label><input type="radio" name="mode" id="mixed" /> Inner size, outer position</label></p>
-          <p><button id="dimensions-get-button" type="button">Get</button> <button type="submit">Set</button></p>
+          <table>
+            <tr><td><label>x:</label></td><td><input id="x" type="number" required readonly /></td><td><span id="dx"></span></td></tr>
+            <tr><td><label>y:</label></td><td><input id="y" type="number" required readonly /></td><td><span id="dy"></span></td></tr>
+            <tr><td><label>w:</label></td><td><input id="w" type="number" required readonly /></td><td><span id="dw"></span></td></tr>
+            <tr><td><label>h:</label></td><td><input id="h" type="number" required readonly /></td><td><span id="dh"></span></td></tr>
+          </table>
+          <p>
+            Get mode:
+            <label><input type="radio" name="mode" id="mixed" checked /> Inner size, outer position</label>
+            <label><input type="radio" name="mode" id="outer" /> Outer</label>
+            <label><input type="radio" name="mode" id="inner" /> Inner size</label>
+          </p>
+          <p>Set mode: Inner size, outer position (this is the way, Tauri handles it)</p>
+          <p>
+            <button id="dimensions-get-button" type="button">Get</button>
+            <button type="submit">Set</button>
+            <button id="create-window" type="button">Get (tauri://created)</button>
+            <button id="create-window-delayed" type="button">Get (tauri://created, delayed)</button>
+          </p>
         </form>
       </div>
     </main>

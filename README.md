@@ -1,1 +1,1 @@
-# Reproduction for Tauri window dimensions issue
+# Tauri window position and size testing

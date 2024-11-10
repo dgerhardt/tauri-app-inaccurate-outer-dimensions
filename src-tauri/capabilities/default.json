@@ -6,6 +6,8 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-close",
     "core:window:allow-inner-position",
     "core:window:allow-inner-size",
     "core:window:allow-outer-position",
