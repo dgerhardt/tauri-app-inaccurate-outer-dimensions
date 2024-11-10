@@ -106,4 +106,11 @@ window.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     createWindow(true);
   });
+  document.querySelector("#get-and-set")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const pos = await mainWin.outerPosition();
+    const size = await mainWin.innerSize();
+    mainWin.setPosition(pos);
+    mainWin.setSize(size);
+  });
 });
